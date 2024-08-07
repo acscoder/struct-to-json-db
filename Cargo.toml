@@ -8,5 +8,5 @@ keywords = ["file-base-database","struct-to-json","simple-embedded-database"]
 description = "A minimalist file-based database designed for straightforward software applications. It leverages the Serde crate to seamlessly serialize and deserialize a HashMap of structured data to and from JSON files, ensuring simplicity and ease of use."
 readme = "README.md"
 [dependencies]
-struct-to-json-db-macro = {version="0.1.0", path="./lib/struct-to-json-db-macro"}
+struct-to-json-db-macro = "0.1.0" 
 rand = "0.8.5"

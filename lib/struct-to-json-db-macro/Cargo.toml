@@ -2,8 +2,11 @@
 name = "struct-to-json-db-macro"
 version = "0.1.0"
 edition = "2021"
-
-[lib]
+license = "Apache-2.0"
+license-file = "LICENSE-2.0.txt"
+keywords = ["struct-to-json-db"]
+description = "macro for struct-to-json-db crate"
+[cratelib]
 proc-macro = true
 
 [dependencies]
