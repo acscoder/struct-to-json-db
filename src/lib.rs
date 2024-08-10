@@ -51,7 +51,7 @@ macro_rules! struct_db_relation {
 macro_rules! db_relation_add {
     ($first:ident=$first_val:literal, $second:ident=$second_val:literal) => {
         struct_to_json_db::paste! {
-            [<$first $second Relation>]::new($first_val,$second_val, 0.0, "".to_string()).save()   
+            [<$first $second Relation>]::new($first_val,$second_val, 0.0, "".to_string())
         }
     };
     ($first:ident=$first_val:expr, $second:ident=$second_val:expr, weight=$weight_val:expr) => {
@@ -93,4 +93,66 @@ macro_rules! db_relation_get {
     };
      
 }
-  
+#[macro_export]
+macro_rules! db_relation_chunking {
+    ($first:ident, $second:ident) => {
+        struct_to_json_db::paste! {
+            #[derive(Serialize,Deserialize,Clone,Debug)]
+            pub struct [<$first $second Chunking>] {
+                pub idx:u64,
+                pub data:Vec<$second>
+            }
+            impl [<$first $second Chunking>] {
+                pub fn new(idx:u64,data:Vec<$second>) -> Self {
+                    Self {
+                        idx,
+                        data 
+                    }
+                }
+                pub fn get(idx:u64) -> Option<Self> {
+                    let file_uri = format!("{}/{}{}Chunking_{}.json",DB_STRUCT_JSON_PATH,stringify!($first),stringify!($second), idx);
+                    let json_str = struct_to_json_db::read_string_from_txt(&file_uri);
+                    if json_str.is_empty(){
+                        return None;
+                    }
+                    let obj = serde_json::from_str(&json_str);
+                    obj.ok()
+                }
+                pub fn save(&self) {
+                    let json_str = serde_json::to_string(&self).unwrap();
+                    struct_to_json_db::write_string_to_txt(&format!("{}/{}{}Chunking_{}.json",DB_STRUCT_JSON_PATH,stringify!($first),stringify!($second), self.idx), json_str);
+                }
+            }
+        }
+    };
+}  
+
+#[macro_export]
+macro_rules! db_relation_chunking_add {
+    ($first:ident=$first_val:literal, $second:ident=$second_val:expr) => {
+        struct_to_json_db::paste! {
+            {
+                let obj = [<$first $second Chunking>]::get($first_val); 
+                if obj.is_none() {
+                    let obj = [<$first $second Chunking>]::new($first_val,$second_val);
+                    obj.save();
+                    return obj;
+                } else {
+                    let mut obj = obj.unwrap();
+                    obj.data.extend($second_val);
+                    obj.save();
+                    return obj;
+                }   
+            }
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! db_relation_chunking_get {
+    ($first:ident=$first_val:literal, $second:ident) => {
+        struct_to_json_db::paste! {
+            [<$first $second Chunking>]::get($first_val)
+        }
+    };
+}
