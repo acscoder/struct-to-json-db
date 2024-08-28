@@ -25,6 +25,24 @@ pub fn unique_id() -> (u64,u64) {
 }
 
 #[macro_export]
+macro_rules! json_db_get_by {
+    ($first:ident, $second:ident:$second_type:expr) => {
+        struct_to_json_db::paste! {
+        |all_data:&HashMap<u64, [<$first>]>,byval:[<$second_type>]|->Vec<(u64,[<$first>])>{
+             all_data.iter().filter_map(|(id, obj)| {
+                if obj.[<$second>] == byval {
+                    Some((id.clone(), obj.clone()))
+                } else {
+                    None
+                }
+                }).collect()      
+        }
+             
+        }
+    };
+}
+
+#[macro_export]
 macro_rules! auto_json_db_config {
     ($path_str:expr) => {
         use struct_to_json_db::auto_json_db;
