@@ -51,6 +51,65 @@ macro_rules! auto_json_db_config {
     };
 }
 #[macro_export]
+macro_rules! json_db_one_many {
+    ($first:ident, $second:ident) => {
+        struct_to_json_db::paste! {
+            #[derive(Serialize,Deserialize,Clone,Debug)]
+            pub struct [<$first $second OneMany>] {
+                pub idx:u64,
+                pub data:Vec<[<$second>]>
+            }
+            impl [<$first $second OneMany>] {
+                pub fn new(idx: u64, data: Vec<$second>) -> Self {
+                    Self { idx, data }
+                }
+                pub fn add(&mut self, new_data: Vec<$second>) {
+                    self.data.extend(new_data);
+                }
+                pub fn delete(&mut self, to_remove: Vec<$second>) {
+                    self.data.retain(|item| !to_remove.contains(item));
+                }
+                pub fn get_all()->std::collections::HashMap<u64,Self>{
+                    let path = format!("{}/one_many_{}_{}.json", DB_STRUCT_JSON_PATH, stringify!($first), stringify!($second));
+                    let db_string = read_string_from_txt(&path);
+                    serde_json::from_str(&db_string).unwrap_or_default() 
+                }
+                pub fn save(&self){
+                    let db = Self::get_all();
+                    db.insert(self.idx, self.clone());
+                    let db_string = serde_json::to_string(&db).unwrap();
+                    struct_to_json_db::write_string_to_txt(&path, db_string); 
+                }
+                pub fn save_all(db:&std::collections::HashMap<u64,Self>){
+                    let path = format!("{}/one_many_{}_{}.json", DB_STRUCT_JSON_PATH, stringify!($first), stringify!($second));
+                    let db_string = serde_json::to_string(db).unwrap();
+                    struct_to_json_db::write_string_to_txt(&path, db_string);
+                }
+                pub fn remove(&self){
+                    Self::remove_by_id(self.idx);
+                }
+                pub fn remove_by_id(id: u64){ 
+                    let mut db = Self::get_all(); 
+                    db.remove(&id);
+                    Self::save_all(&db); 
+                }
+                pub fn remove_by_ids(ids: &Vec<u64>){
+                    let mut db = Self::get_all(); 
+                    for id in ids{
+                        db.remove(&id);
+                    }
+                    Self::save_all(&db); 
+                }
+                pub fn clear(){
+                    let path = format!("{}/one_many_{}_{}.json", DB_STRUCT_JSON_PATH, stringify!($first), stringify!($second));
+                    struct_to_json_db::write_string_to_txt(&path, "".to_owned());
+                }
+            }
+        }
+    };
+}
+
+#[macro_export]
 macro_rules! struct_db_relation {
     ($first:ident, $second:ident) => {
         struct_to_json_db::paste! {
@@ -108,69 +167,6 @@ macro_rules! db_relation_get {
             
             }
         }
-    };
-     
+    };     
 }
-#[macro_export]
-macro_rules! db_relation_chunking {
-    ($first:ident, $second:ident) => {
-        struct_to_json_db::paste! {
-            #[derive(Serialize,Deserialize,Clone,Debug)]
-            pub struct [<$first $second Chunking>] {
-                pub idx:u64,
-                pub data:Vec<$second>
-            }
-            impl [<$first $second Chunking>] {
-                pub fn new(idx:u64,data:Vec<$second>) -> Self {
-                    Self {
-                        idx,
-                        data 
-                    }
-                }
-                pub fn get(idx:u64) -> Option<Self> {
-                    let file_uri = format!("{}/{}{}Chunking_{}.json",DB_STRUCT_JSON_PATH,stringify!($first),stringify!($second), idx);
-                    let json_str = struct_to_json_db::read_string_from_txt(&file_uri);
-                    if json_str.is_empty(){
-                        return None;
-                    }
-                    let obj = serde_json::from_str(&json_str);
-                    obj.ok()
-                }
-                pub fn save(&self) {
-                    let json_str = serde_json::to_string(&self).unwrap();
-                    struct_to_json_db::write_string_to_txt(&format!("{}/{}{}Chunking_{}.json",DB_STRUCT_JSON_PATH,stringify!($first),stringify!($second), self.idx), json_str);
-                }
-            }
-        }
-    };
-}  
-
-#[macro_export]
-macro_rules! db_relation_chunking_add {
-    ($first:ident=$first_val:literal, $second:ident=$second_val:expr) => {
-        struct_to_json_db::paste! {
-            {
-                let obj = [<$first $second Chunking>]::get($first_val); 
-                if obj.is_none() {
-                    let obj = [<$first $second Chunking>]::new($first_val,$second_val);
-                    obj.save();
-                    return obj;
-                } else {
-                    let mut obj = obj.unwrap();
-                    obj.data.extend($second_val);
-                    obj.save();
-                    return obj;
-                }   
-            }
-        }
-    };
-}
-
-#[macro_export]
-macro_rules! db_relation_chunking_get {
-    ($first:ident=$first_val:literal, $second:ident) => {
-        struct_to_json_db::paste! {
-            [<$first $second Chunking>]::get($first_val)
-        }
-    };
-}
+ 
