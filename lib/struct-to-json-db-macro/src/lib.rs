@@ -72,11 +72,9 @@ pub fn auto_json_db(_attr: TokenStream, item: TokenStream) -> TokenStream {
                 struct_to_json_db::write_string_to_txt(&file_path, "{}".to_owned());
             }
             pub fn save(&self){
-                let file_path = Self::get_path();
                 let mut db = Self::get_all();
                 db.insert(self.idx, self.clone());
-                let db_string = serde_json::to_string(&db).unwrap();
-                struct_to_json_db::write_string_to_txt(&file_path, db_string);
+                Self::save_all(&db);
             }
             pub fn save_vec(v:Vec<Self>){
                 let file_path = Self::get_path();
