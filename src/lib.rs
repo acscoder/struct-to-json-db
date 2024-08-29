@@ -66,22 +66,23 @@ macro_rules! json_db_one_many {
                 pub fn add(&mut self, new_data: Vec<[<$second>]>) {
                     self.data.extend(new_data);
                 }
-                
+                pub fn get_path()->String{
+                    format!("{}/one_many_{}_{}.json", DB_STRUCT_JSON_PATH, stringify!($first), stringify!($second))
+                }
                 pub fn get_all()->std::collections::HashMap<u64,Self>{
-                    let path = format!("{}/one_many_{}_{}.json", DB_STRUCT_JSON_PATH, stringify!($first), stringify!($second));
-                    let db_string = read_string_from_txt(&path);
+                    let file_path = Self::get_path();
+                    let db_string = read_string_from_txt(&file_path);
                     serde_json::from_str(&db_string).unwrap_or_default() 
                 }
-                pub fn save(&self){
+                pub fn save(&self){ 
                     let db = Self::get_all();
                     db.insert(self.idx, self.clone());
-                    let db_string = serde_json::to_string(&db).unwrap();
-                    struct_to_json_db::write_string_to_txt(&path, db_string); 
+                    Self::save_all(&db);
                 }
                 pub fn save_all(db:&std::collections::HashMap<u64,Self>){
-                    let path = format!("{}/one_many_{}_{}.json", DB_STRUCT_JSON_PATH, stringify!($first), stringify!($second));
+                    let file_path = Self::get_path();
                     let db_string = serde_json::to_string(db).unwrap();
-                    struct_to_json_db::write_string_to_txt(&path, db_string);
+                    struct_to_json_db::write_string_to_txt(&file_path, db_string);
                 }
                 pub fn remove(&self){
                     Self::remove_by_id(self.idx);
@@ -99,8 +100,8 @@ macro_rules! json_db_one_many {
                     Self::save_all(&db); 
                 }
                 pub fn clear(){
-                    let path = format!("{}/one_many_{}_{}.json", DB_STRUCT_JSON_PATH, stringify!($first), stringify!($second));
-                    struct_to_json_db::write_string_to_txt(&path, "".to_owned());
+                    let file_path = Self::get_path();
+                    struct_to_json_db::write_string_to_txt(&file_path, "".to_owned());
                 }
             }
         }
