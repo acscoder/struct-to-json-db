@@ -60,15 +60,13 @@ macro_rules! json_db_one_many {
                 pub data:Vec<[<$second>]>
             }
             impl [<$first $second OneMany>] {
-                pub fn new(idx: u64, data: Vec<$second>) -> Self {
+                pub fn new(idx: u64, data: Vec<[<$second>]>) -> Self {
                     Self { idx, data }
                 }
-                pub fn add(&mut self, new_data: Vec<$second>) {
+                pub fn add(&mut self, new_data: Vec<[<$second>]>) {
                     self.data.extend(new_data);
                 }
-                pub fn delete(&mut self, to_remove: Vec<$second>) {
-                    self.data.retain(|item| !to_remove.contains(item));
-                }
+                
                 pub fn get_all()->std::collections::HashMap<u64,Self>{
                     let path = format!("{}/one_many_{}_{}.json", DB_STRUCT_JSON_PATH, stringify!($first), stringify!($second));
                     let db_string = read_string_from_txt(&path);
