@@ -104,6 +104,17 @@ macro_rules! json_db_one_many {
                     struct_to_json_db::write_string_to_txt(&file_path, "".to_owned());
                 }
             }
+            impl [<$second>] {
+                pub fn [<$first $second OneMany_get_by_id >](id: u64) -> Option<Self> {
+                    let all_data = [<$first $second OneMany>]::get_all();
+                    all_data.iter().filter_map(|(idx, one_many)| one_many.data.iter().find(|&data| data.idx == id).cloned()).next()
+                }
+                pub fn [<$first $second OneMany_remove_by_id >](id: u64){ 
+                    let mut all_data = [<$first $second OneMany>]::get_all();
+                    all_data.iter_mut().for_each(|(idx, one_many)| one_many.data.retain(|data| data.idx != id));
+                    [<$first $second OneMany>]::save_all(&all_data);
+                }
+            }
         }
     };
 }
