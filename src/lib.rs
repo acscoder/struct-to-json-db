@@ -118,6 +118,20 @@ macro_rules! json_db_one_many_get{
     };
 }
 #[macro_export]
+macro_rules! json_db_one_many_add{
+    ($first:ident=$first_val:literal, $second:ident=$second_val:literal) => {
+        struct_to_json_db::paste! {
+            {
+               let all_data = [<$first $second OneMany>]::get_all();
+               let newone = [<$first $second OneMany>]::new($first_val,$second_val);
+               all_data.insert(newone.idx, newone);
+               [<$first $second OneMany>]::save_all(&all_data);
+               all_data
+            }
+        }
+    };
+}
+#[macro_export]
 macro_rules! json_db_many_many {
     ($first:ident, $second:ident) => {
         struct_to_json_db::paste! {
