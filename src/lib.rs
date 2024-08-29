@@ -107,7 +107,16 @@ macro_rules! json_db_one_many {
         }
     };
 }
-
+#[macro_export]
+macro_rules! json_db_one_many_get{
+    ($first:ident, $second:ident) => {
+        struct_to_json_db::paste! {
+            {
+                [<$first $second OneMany>]::get_all()
+            }
+        }
+    };
+}
 #[macro_export]
 macro_rules! json_db_many_many {
     ($first:ident, $second:ident) => {
