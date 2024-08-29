@@ -110,7 +110,7 @@ macro_rules! json_db_one_many {
 }
 
 #[macro_export]
-macro_rules! struct_db_relation {
+macro_rules! json_db_many_many {
     ($first:ident, $second:ident) => {
         struct_to_json_db::paste! {
             #[auto_json_db]
@@ -125,7 +125,7 @@ macro_rules! struct_db_relation {
     };
 }
 #[macro_export]
-macro_rules! db_relation_add {
+macro_rules! json_db_many_many_add {
     ($first:ident=$first_val:literal, $second:ident=$second_val:literal) => {
         struct_to_json_db::paste! {
             [<$first $second Relation>]::new($first_val,$second_val, 0.0, "".to_string())
@@ -148,7 +148,7 @@ macro_rules! db_relation_add {
     };
 }
 #[macro_export]
-macro_rules! db_relation_get {
+macro_rules! json_db_many_many_get {
     ($first:ident=$first_val:literal, $second:ident) => {
         struct_to_json_db::paste! {
             {
