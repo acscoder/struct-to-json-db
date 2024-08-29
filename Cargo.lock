@@ -96,7 +96,7 @@ dependencies = [
 
 [[package]]
 name = "struct-to-json-db"
-version = "0.1.19"
+version = "0.1.20"
 dependencies = [
  "paste",
  "rand",

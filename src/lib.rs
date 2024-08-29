@@ -133,7 +133,7 @@ macro_rules! json_db_one_many_add{
     ($first:ident=$first_val:expr, $second:ident=$second_val:expr) => {
         struct_to_json_db::paste! {
             {
-               let all_data = [<$first $second OneMany>]::get_all();
+               let mut all_data = [<$first $second OneMany>]::get_all();
                let newone = [<$first $second OneMany>]::new($first_val,$second_val);
                all_data.insert(newone.idx, newone);
                [<$first $second OneMany>]::save_all(&all_data);
