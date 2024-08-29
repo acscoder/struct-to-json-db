@@ -75,7 +75,7 @@ macro_rules! json_db_one_many {
                     serde_json::from_str(&db_string).unwrap_or_default() 
                 }
                 pub fn save(&self){ 
-                    let db = Self::get_all();
+                    let mut db = Self::get_all();
                     db.insert(self.idx, self.clone());
                     Self::save_all(&db);
                 }
