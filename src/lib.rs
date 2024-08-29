@@ -130,7 +130,7 @@ macro_rules! json_db_one_many_get{
 }
 #[macro_export]
 macro_rules! json_db_one_many_add{
-    ($first:ident=$first_val:literal, $second:ident=$second_val:literal) => {
+    ($first:ident=$first_val:expr, $second:ident=$second_val:expr) => {
         struct_to_json_db::paste! {
             {
                let all_data = [<$first $second OneMany>]::get_all();
