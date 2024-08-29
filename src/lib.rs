@@ -45,7 +45,7 @@ macro_rules! json_db_get_by {
 #[macro_export]
 macro_rules! auto_json_db_config {
     ($path_str:expr) => {
-        use struct_to_json_db::auto_json_db;
+        use struct_to_json_db::*;
         use serde::{Deserialize, Serialize};
         static DB_STRUCT_JSON_PATH:&str = $path_str;
     };
