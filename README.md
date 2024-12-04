@@ -26,11 +26,40 @@ Note: Ensure that the path ends with a slash (/). For example, "./db/" is correc
 ### Adding the Macro to Your Struct
 Use the #[auto_json_db] macro for your struct to automatically add a unique ID and additional methods:
 ```rust
-#[auto_json_db]
+use struct_to_json_db::*;
+auto_json_db_config!("./db/");
+
+#[auto_json_db(unique="title")]
 struct Post {
     title: String,
     description: String,
-    categories: Vec<String>
+    categories: Vec<u64>
+}
+#[auto_json_db(unique="name")]
+struct Category {
+    name: String
+}
+json_db_relation!(Post=categories, Category);
+ 
+fn main() {
+    let mut all_posts = Post::get_all(); 
+    println!("{:?}", all_posts);
+      
+    let c1 = Category::new("cat_1".to_owned());
+    let c2 =  Category::new("cat_2".to_owned());
+    c1.save();
+    c2.save();
+   
+    let c = add_posts("post_2".to_owned(), "desc_1".to_owned(), &vec![c1,c2]);
+    println!("{:?}", c);
+    
+}
+fn add_posts(title: String, description: String,cates:&Vec<Category>)->Option<u64> {
+    let mut p1 = Post::new( title,description,vec![]);
+    if cates.len() > 0{
+        p1.set_categories(cates);
+    }
+    p1.save()
 }
 ```
 This macro will add the following:
