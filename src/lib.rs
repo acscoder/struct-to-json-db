@@ -1,5 +1,6 @@
 pub use struct_to_json_db_macro::auto_json_db; 
 use std::fs;
+use std::path::Path;
 use std::io::Write; 
 use rand::Rng;
 use magic_crypt::{new_magic_crypt, MagicCryptTrait};
@@ -42,6 +43,27 @@ pub fn unique_id() -> (u64,u64) {
     let timestamp = start.duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos() as u64 ;
     let random_number = rand::thread_rng().gen::<u64>();
     (random_number,timestamp)
+}
+pub fn make_folder_if_not_exist(path:&str){
+    let path = Path::new(path);
+    if !path.exists() {
+        let _ = fs::create_dir_all(path) ;
+    }
+}
+ 
+pub fn remove_file_by_path(path: &str) {
+    let path = Path::new(path);
+    if path.exists() {
+        let _ = fs::remove_file(path);
+    }  
+}
+pub fn remove_all_files_by_path(path: &str)  {
+    // Convert the input string to a Path
+    let path = Path::new(path);
+    if path.exists() {
+        // Remove the directory and all its contents (files and subdirectories)
+        let _ = fs::remove_dir_all(path);
+    }  
 }
 
 #[macro_export]
