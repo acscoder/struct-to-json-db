@@ -340,7 +340,7 @@ dependencies = [
 
 [[package]]
 name = "struct-to-json-db"
-version = "0.1.22"
+version = "0.1.23"
 dependencies = [
  "lazy_static",
  "magic-crypt",
@@ -352,7 +352,9 @@ dependencies = [
 
 [[package]]
 name = "struct-to-json-db-macro"
-version = "0.1.9"
+version = "0.1.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0ada1368a520841cdfebfc9b8845f9e268a57abbd4faf254daea0d16806e0241"
 dependencies = [
  "proc-macro2",
  "quote",

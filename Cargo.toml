@@ -1,6 +1,6 @@
 [package]
 name = "struct-to-json-db"
-version = "0.1.23"
+version = "0.1.24"
 edition = "2021"
 license = "Apache-2.0"
 license-file = "LICENSE-2.0.txt"
@@ -8,8 +8,8 @@ keywords = ["file-base-database","struct-to-json"]
 description = "A minimalist file-based database designed for straightforward software applications. It leverages the Serde crate to seamlessly serialize and deserialize a HashMap of structured data to and from JSON files, ensuring simplicity and ease of use."
 readme = "README.md"
 [dependencies]
-#struct-to-json-db-macro = {path="./lib/struct-to-json-db-macro"}
-struct-to-json-db-macro = "0.1.10"
+struct-to-json-db-macro = {path="./lib/struct-to-json-db-macro"}
+#struct-to-json-db-macro = "0.1.10"
 rand = "0.8.5"
 paste = "1.0.15"
 magic-crypt = "3.1.13"

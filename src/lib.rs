@@ -7,6 +7,8 @@ use magic_crypt::{ new_magic_crypt, MagicCryptTrait};
 pub use paste::paste;
 use lazy_static::lazy_static;
 use std::sync::Mutex;
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
 
 pub fn read_string_from_txt(filename: &str) -> String {
     let file_contents = fs::read_to_string(filename).unwrap_or_default();
@@ -68,25 +70,12 @@ pub fn remove_all_files_by_path(path: &str)  {
         let _ = fs::remove_dir_all(path);
     }  
 }
-
-use sha2::{Sha256, Digest};
-pub fn string_to_unique_id(input: &str) -> String {
-    // Create a SHA-256 hasher
-    let mut hasher = Sha256::new();
-
-    // Feed the input string into the hasher
-    hasher.update(input.as_bytes()); // Explicitly convert to bytes
-
-    // Finalize the hash and get the result as a byte array
-    let hash_result = hasher.finalize();
-
-    // Convert the byte array to a hexadecimal string
-    hash_result
-        .iter()
-        .map(|byte| format!("{:02x}", byte))
-        .collect()
+ 
+pub fn string_to_hash(s: &str) -> u64 {
+    let mut hasher = DefaultHasher::new();
+    s.hash(&mut hasher);
+    hasher.finish()
 }
-
 
 #[macro_export]
 macro_rules! json_db_get_by {
@@ -217,6 +206,7 @@ macro_rules! auto_json_db_one_file{
         } 
     }
 }
+
 
 #[macro_export]
 macro_rules! json_db_relation {
